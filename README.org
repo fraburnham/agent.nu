@@ -1,0 +1,20 @@
+* agent.nu
+
+An agent harness written in nushell against the ollama api
+
+** Agent strategy
+
+Not going for speed. Instead using one model to split a task and delegate to multiple other models (which really may be itself but separated in context and time). The idea is I want to
+direct a "team" of so-so models instead of using a harness for one of the big boy models.
+
+** Slash commands
+
+- ~/models~: list all available models (optional prefix for filtering)
+- ~/use~: select a model. The current model will be unloaded and a new one put in service
+- ~/clear~: clear screen and context
+
+** Tools
+
+I'm not really sure what the most fundamental tool will be? Probably bash, eh? But basically I want to put the harness in a place where it can start reading and updating
+itself asap. Reading and research will probably be easier than updating. But once I have reading files in place I can ask it to make edits and show me the diff/patch
+then see how things shake out.
