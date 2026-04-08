@@ -1,31 +1,48 @@
+export def header []: nothing -> nothing {
+  print ""
+  print $"(ansi bo)Type '/exit' to quit(ansi reset)"
+}
+
 export def prompt []: nothing -> string {
   mut buf = ""
 
+  print ""
   print -n $"(ansi red)>(ansi reset) "
 
   loop {
-    let c = input listen
-    | get code?
-
-    match $c {
-      # TODO: handle navigation keys!
-      "enter" => {
-        print ""
-        break
+    let event = input listen
+    match $event.type {
+      "paste" => {
+        $buf += $event.content
+        print -n $event.content
       }
+
+      "key" => {
+        # TODO: handle navigation keys
+        let c = $event
+        | get code?
+
+        match $c {
+          "enter" => {
+            print ""
+            break
+          }
       
-      "backspace" => {
-        $buf = $buf
-        | str substring ..-2
+          "backspace" => {
+            $buf = $buf
+            | str substring ..-2
 
-        print -n $"(char backspace) (char backspace)"
-      }
+            print -n $"(char backspace) (char backspace)"
+          }
 
-      _ => {
-        if ($c | is-not-empty) {
-          $buf += $c
-          print -n $c
+          _ => {
+            if ($c | is-not-empty) {
+              $buf += $c
+              print -n $c
+            }
+          }
         }
+
       }
     }
   }
@@ -33,13 +50,14 @@ export def prompt []: nothing -> string {
   $buf
 }
 
-# def working-indicator [] {
-#   # It'd be nice to have... Probably a matter of render a char
-#   # then backspace and render a diff one
-#   # but idk how this loop would hear back from the api call
-#   # probably a job and such
-# }
+export def response [
+  context: record
+]: nothing -> nothing {
+  let response = $context.messages
+  | last
+  | get content
 
-# TODO: post-process the markdown output with ansi chars? Like leave it markdown syntax but also enrich stuff like headers, bold, italic, code (way bonus points for syntax highlighting)
+  print ""
+  print $"(ansi blue)*(ansi reset) ($response)"
+}
 
-# also is this failing open and just hanging or was that old shells that didn't cleanup?
