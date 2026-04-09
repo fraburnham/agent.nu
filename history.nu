@@ -15,6 +15,8 @@ export def "start worker" []: nothing -> int {
 
 export def update [
   history_worker_id: int
-]: any -> nothing {
-  job send $history_worker_id
+  context: record
+]: nothing -> nothing {
+  $context
+  | job send $history_worker_id
 }

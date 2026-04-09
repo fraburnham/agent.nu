@@ -13,8 +13,8 @@ export def "append prompt" [
 
 export def "append response" [
   context: record
-]: record<role: string, content: string, thinking: string> -> record {
-  let response = $in
+]: record -> record {
+  let response: record = $in
 
   $context
   | upsert messages { |context|
