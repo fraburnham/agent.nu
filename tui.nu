@@ -1,3 +1,5 @@
+use context/manage.nu
+
 export def header []: nothing -> nothing {
   print ""
   print $"(ansi bo)Type '/exit' to quit(ansi reset)"
@@ -77,6 +79,12 @@ def handle []: record -> nothing {
 
   if ((response $context) or (($context.messages? | length) == 1)) {
     match (prompt) {
+      # ALRIGHT! The prompt needs to be interruptible?
+      # The agent is getting responses and the output needs to be updated but the prompt is waiting instead of showing the output
+      # Once I added a prompt. I got a response. But the history/context got all fucked up and the prompt doesn't match.
+
+      # Ok. input listen can take a timeout. So when there is no imput coming for <period> then check if there is output to draw
+
       # TODO: /clear
       # TODO: /context-remove-latest-response
       # TODO: /context-remove-latest-prompt
@@ -88,7 +96,8 @@ def handle []: record -> nothing {
       }
 
       $user_input => {
-        $user_input
+        $context
+        | manage append prompt $user_input
         | job send $reply_to_job_id
       }
     }

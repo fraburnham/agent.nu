@@ -1,27 +1,17 @@
-export def "handle agent use" []: record -> record {
+export def use [
+  tool_handler_job_id: int
+]: record -> record {
   let context = $in
-  let tool_calls = $context.messages
-  | last
-  | get tool_calls?
-  | default []
 
-  $tool_calls
-  | reduce --fold $context { |tool_call, context|
-    let function = $tool_call.function
-
-    {
-      id: $tool_call.id?
-      role: "tool"
-      content: (
-        match $function.name {
-          $delegate_work_name => {
-            delegate work $function.arguments
-          }
-        }
-      )
-    }
-    | context append response $context
+  {
+    context: $context
+    reply_to_job_id: (job id)
   }
+  | job send $tool_handler_job_id
+
+  # This doesn't await the response because the agent-loop is awaiting the response.
+  
+  $context
 }
 
 export def "available to agent" [
@@ -31,3 +21,4 @@ export def "available to agent" [
   $tool_schemas
   | get $agent
 }
+
