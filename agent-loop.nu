@@ -1,28 +1,28 @@
 use api.nu
 use tui.nu
 use history.nu
-use context.nu
+use context/manage.nu
+use tools/utils.nu
+
+alias tools = utils
 
 def advance [
   context: record
   user_input: oneof<string, nothing>
   history_worker_id: int
-  tool_handler: closure # This is a hack to avoid an import loop. There's probably a better way, though.
   --model: string
   --host: string
 ]: nothing -> record {
   $context
-  | context append prompt $user_input
+  | manage append prompt $user_input
   | api chat --model $model --host $host
-  | do $tool_handler # This is a hack to avoid an import loop. There's probably a better way, though. Message passing?
+  | tools handle agent use
   | history update $history_worker_id
 }
 
 export def run [
-  context: record
-  tool_handler: closure # This is a hack to avoid an import loop. There's probably a better way, though.
   manager_job_id: int
-  persona: string
+  initial_context: record
   --model: string = "qwen3.5:0.8b-bf16"
   --host: string = "http://workload.api.llm.skynet"
 ] {
@@ -30,8 +30,8 @@ export def run [
     # TODO: token use tracking (iirc ollama is responding with all kinds of metrics, use them to track context fullness)
     # TODO: config file to pull model and params (temp/top_p/context length/etc) from
 
-    let history_worker_id = history start worker # TODO: this needs to be cleaned up or it'll be a leak
-    mut context: record = initial $persona
+    let history_worker_id = history start worker # TODO: this needs to be cleaned up or it'll be a leak (so probabably have the manager start it...)
+    mut context: record = $initial_context
   
     loop {
       {
@@ -40,7 +40,7 @@ export def run [
       }
       | job send $manager_job_id
       
-      $context = advance $context (job recv) $history_worker_id $tool_handler --model $model --host $host
+      $context = advance $context (job recv) $history_worker_id --model $model --host $host
     }
   }
 }

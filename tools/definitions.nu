@@ -1,4 +1,4 @@
-use delegate-work.nu ['delegate work' delegate_work_schema delegate_work_name]
+use delegate-work.nu [delegate_work_schema]
 
 export const tool_schemas = {
   high-level-leader: [

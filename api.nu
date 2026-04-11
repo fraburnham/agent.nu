@@ -1,4 +1,4 @@
-use context.nu
+use context/manage.nu
 
 export def chat [
   --model: string
@@ -12,5 +12,5 @@ export def chat [
   | to json
   | http post $"($host)/api/chat"
   | get message
-  | context append response ($context | reject model stream)
+  | manage append response ($context | reject model stream)
 }

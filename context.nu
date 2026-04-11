@@ -1,30 +1,10 @@
-export def "append prompt" [
-  prompt: oneof<string, nothing>
-]: record -> record {
-  let context = $in
+use tools/definitions.nu [tool_schemas]
+use context/setup.nu ["initial"]
 
-  if ($prompt | is-not-empty) {
-    $context
-    | upsert messages { |context|
-      $context.messages
-      | append {
-        role: "user"
-        content: $prompt
-      }
-    }
-  } else {
-    $context
-  }
-}
+alias _initial = initial
 
-export def "append response" [
-  context: record
-]: record -> record {
-  let response: record = $in
-
-  $context
-  | upsert messages { |context|
-    $context.messages
-    | append $response
-  }
+export def initial [
+  agent: string
+] {
+  _initial $tool_schemas $agent
 }

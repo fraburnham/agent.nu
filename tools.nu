@@ -1,10 +1,10 @@
-use tools/definitions.nu [tool_schemas]
 use tools/utils.nu
 
+export use tools/definitions.nu [tool_schemas]
 export use tools/utils.nu ["handle agent use"]
 
 export def "available to agent" [
-  persona: string
+  agent: string
 ] {
-  utils available to agent $tool_schemas $persona
+  utils available to agent $tool_schemas $agent
 }
