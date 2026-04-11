@@ -1,5 +1,5 @@
 use tools/definitions.nu [tool_schemas]
-use tools/delegate-work.nu ["delegate work"]
+use tools/delegate-work.nu
 use tools/utils.nu
 use context/manage.nu
 
@@ -32,8 +32,8 @@ export def "run handler" [] {
           role: "tool"
           content: (
             match $function.name {
-              "delegate work" => {
-                delegate work $function.arguments
+              "delegate-work" => {
+                delegate-work $function.arguments
               }
 
               _ => {

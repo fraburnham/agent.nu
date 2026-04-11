@@ -34,14 +34,42 @@ export def run [
       {
         context: $context
         reply_to_job_id: (job id)
+        type: context
       }
       | job send $manager_job_id
 
-      # AHH! We're back to needing to skip the wait if there is a tool response...
-      # So instead of being _sync_ the tool can _start_ the 
+      let message = job recv
 
-      # Wait for the manager to respond with a context, then advance it
-      $context = job recv
+      $context = match $message.type {
+        "user-input" => {
+          match ($message.user_input) {
+            # TODO: /clear
+            # TODO: /context-remove-latest-response
+            # TODO: /context-remove-latest-prompt
+            "/exit" => { # So now the agent loop has to handle these again?
+              "/exit"
+              | job send 0
+
+              break
+            }
+
+            $user_input => {
+              $context
+              | manage append prompt $message.user_input
+            }
+          }
+        }
+
+        "context" => {
+          $message.context
+        }
+
+        _ => {
+          print "Ignoring message"
+          print $message
+          $context
+        }
+      }
       | advance $history_worker_id $tool_handler_job_id --model $model --host $host
     }
   }

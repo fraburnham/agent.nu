@@ -24,7 +24,7 @@
 #   }
 # }
 
-export def "delegate work" [
+export def main [
   params: record<worker: string, task: string>
 ]: nothing -> string {
   "The most popular lexer is logos. It is fast and simple."

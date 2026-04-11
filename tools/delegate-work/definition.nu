@@ -1,7 +1,7 @@
 export const delegate_work_schema = {
   type: "function"
   function: {
-    name: "delegate work"
+    name: "delegate-work"
     description: "Delegate a task to someone on your team. The response will be the result of them working on that task."
     parameters: {
       type: "object"
