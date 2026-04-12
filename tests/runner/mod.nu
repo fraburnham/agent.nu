@@ -3,6 +3,8 @@
 # It should do simple stuff like be called as the last line of a nu test file and
 # run all the `test *` commands (w/o any args for now, maybe test setup stuff soon)
 
+export use stub.nu
+
 export def run [] {
   # Stolen from https://www.nushell.sh/book/testing.html
 
