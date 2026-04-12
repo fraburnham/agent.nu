@@ -1,5 +1,4 @@
 use api.nu
-use tui.nu
 use history.nu
 use context
 use tools/utils.nu
@@ -30,6 +29,7 @@ export def run [
     mut context: record = $initial_context
   
     loop {
+      # TODO: I think this could drop the mutable if the non-context events pass a context...
       # Send the manager the current/advanced context
       {
         context: $context
@@ -65,6 +65,7 @@ export def run [
         }
 
         _ => {
+          # TODO: use logging and log levels and whatever config to hide debug logs most of the time
           print "Ignoring message"
           print $message
           $context
