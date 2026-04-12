@@ -1,9 +1,9 @@
 #!/usr/bin/env nu
 
-use agent-loop.nu
-use context.nu
-use tui.nu
-use tools.nu
+use src/agent-loop.nu
+use src/context.nu
+use src/tui.nu
+use src/tools.nu
 
 def main [] {
   agent-loop run (tui run) (tools run handler) (context initial high-level-leader)
