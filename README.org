@@ -31,3 +31,38 @@ This agent searches on the filesystem for code relevant to some request.
 - File Search
 - Summarize Contents
   - Delegates to another agent
+
+
+** TODO
+
+- Tests
+- Improve code org
+- Personas from md files
+- Config file
+  - Which model for each agent type?
+    - Model settings per agent type
+  - Which persona for each agent type?
+- Track context usage
+  - Would be best to know the model's context limits (or maybe set them...)
+- Context management commands
+  - /clear
+  - /context-remove-latest-response
+  - /context-remove-latest-prompt
+- Tools
+  - grep
+  - glob
+  - replace-in-file
+  - write
+  - patch
+    - maybe? I wonder if models are smart enough to make diff patches...
+  - web-search
+  - lsp?
+  - bash?
+  - calc?
+- Tool timeouts
+- Prompt should handle navigation keys
+- Save context and history separately
+  - Context should be saved so that the session is /resumable/
+  - History should be saved for analysis/review
+- Manager starts history worker
+- Resumable sessions
