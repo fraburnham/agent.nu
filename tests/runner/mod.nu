@@ -21,10 +21,8 @@ export def run [] {
 
   try {
     nu --commands $"source ($env.CURRENT_FILE); ($test_commands)"
-    print $"(ansi green_bold)\u{2713}(ansi reset) Tests completed successfully"
+    print $"\n(ansi green_bold)\u{2713}(ansi reset) Tests completed successfully\n"
   } catch {
-    print $"(ansi red_bold)\u{2717}(ansi reset) Tests in ($env.CURRENT_FILE) failed"
+    print $"\n(ansi red_bold)\u{2717}(ansi reset) Tests in ($env.CURRENT_FILE) failed\n"
   }
-
-  print ""
 }
