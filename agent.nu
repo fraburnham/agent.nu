@@ -1,7 +1,7 @@
 #!/usr/bin/env nu
 
 use src/agent-loop.nu
-use src/context.nu
+use src/context
 use src/tui.nu
 use src/tools.nu
 

@@ -1,7 +1,7 @@
 use api.nu
 use tui.nu
 use history.nu
-use context/manage.nu
+use context
 use tools/utils.nu
 
 def advance [
@@ -19,7 +19,7 @@ export def run [
   manager_job_id: int
   tool_handler_job_id: int
   initial_context: record
-  --model: string = "gpt-oss:20b" #"gemma4:e2b" #"qwen3.5:9b" #"qwen3.5:9b-bf16"
+  --model: string = "qwen3.5:0.8b-bf16" #"gpt-oss:20b" #"gemma4:e2b" #"qwen3.5:9b" #"qwen3.5:9b-bf16"
   --host: string = "http://workload.api.llm.skynet"
 ] {
   job spawn --tag agent-loop { ||
@@ -55,7 +55,7 @@ export def run [
 
             $user_input => {
               $context
-              | manage append prompt $message.user_input
+              | context append prompt $message.user_input
             }
           }
         }

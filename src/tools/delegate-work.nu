@@ -1,6 +1,6 @@
 use ../agent-loop.nu
 use utils.nu
-use ../context/manage.nu
+use ../context
 
 export def main [
   tool_handler_job_id: int
@@ -10,7 +10,7 @@ export def main [
 
   agent-loop run (job id) $tool_handler_job_id (
     context initial $params.worker
-    | manage append prompt $params.task
+    | context append prompt $params.task
   )
 
   loop {

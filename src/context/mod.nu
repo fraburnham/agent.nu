@@ -1,5 +1,7 @@
-use tools/definitions.nu [tool_schemas]
-use context/setup.nu ["initial"]
+use ../tools/definitions.nu [tool_schemas]
+use setup.nu ["initial"]
+
+export use manage.nu *
 
 alias _initial = initial
 

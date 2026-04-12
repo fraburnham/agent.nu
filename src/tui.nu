@@ -1,5 +1,3 @@
-use context/manage.nu
-
 export def header []: nothing -> nothing {
   print ""
   print $"(ansi bo)Type '/exit' to quit(ansi reset)"
