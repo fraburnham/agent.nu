@@ -4,4 +4,9 @@ export const tool_schemas = {
   high-level-leader: [
     $delegate_work_schema
   ]
+
+  web-researcher: []
+
+  code-researcher: []
 }
+

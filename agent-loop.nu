@@ -19,7 +19,7 @@ export def run [
   manager_job_id: int
   tool_handler_job_id: int
   initial_context: record
-  --model: string = "qwen3.5:0.8b-bf16"
+  --model: string = "gpt-oss:20b" #"gemma4:e2b" #"qwen3.5:9b" #"qwen3.5:9b-bf16"
   --host: string = "http://workload.api.llm.skynet"
 ] {
   job spawn --tag agent-loop { ||

@@ -23,7 +23,7 @@ export def "run handler" [] {
         continue
       }
 
-      $tool_calls
+      let context = $tool_calls
       | reduce --fold $context { |tool_call, context|
         let function = $tool_call.function
 
@@ -33,7 +33,11 @@ export def "run handler" [] {
           content: (
             match $function.name {
               "delegate-work" => {
-                delegate-work $function.arguments
+                let tool_handler_job_id = run handler
+                let response = delegate-work $tool_handler_job_id $function.arguments
+
+                job kill $tool_handler_job_id
+                $response
               }
 
               _ => {
@@ -43,6 +47,11 @@ export def "run handler" [] {
           )
         }
         | manage append response $context
+      }
+
+      {
+        context: $context
+        type: context
       }
       | job send $message.reply_to_job_id
     }

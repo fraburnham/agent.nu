@@ -101,6 +101,7 @@ def response [
     $ready_for_user_input = true
 
     print (ansi erase_entire_line)
+    print -n $"(char backspace)(char backspace)(char backspace)" # Matches prompt length (TODO do gooder)
     print $"(ansi blue)*(ansi reset) ($response.content)"
   }
 
