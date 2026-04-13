@@ -21,7 +21,7 @@ export def run [
   --model: string = "qwen3.5:0.8b-bf16" #"gpt-oss:20b" #"gemma4:e2b" #"qwen3.5:9b" #"qwen3.5:9b-bf16"
   --host: string = "http://workload.api.llm.skynet"
 ] {
-  job spawn --tag agent-loop { ||
+  job spawn { || # --tag agent-loop { ||
     # TODO: token use tracking (iirc ollama is responding with all kinds of metrics, use them to track context fullness)
     # TODO: config file to pull model and params (temp/top_p/context length/etc) from
 

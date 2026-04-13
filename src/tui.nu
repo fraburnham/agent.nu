@@ -4,7 +4,7 @@ export def header []: nothing -> nothing {
 }
 
 def prompt []: nothing -> int {
-  job spawn --tag prompt { ||
+  job spawn { || #--tag prompt { ||
     mut buf = ""
     mut reply_to_job_id = 0
     mut ready_for_input = false
@@ -131,7 +131,7 @@ def handle [
 }
 
 export def run []: nothing -> int {
-  job spawn --tag tui { ||
+  job spawn { || #--tag tui { ||
     let prompt_job_id = prompt
 
     header

@@ -4,7 +4,7 @@ export def "start worker" []: nothing -> int {
 
   mkdir .agent.nu/history
 
-  job spawn --tag history-worker { ||
+  job spawn { || #--tag history-worker { ||
     loop {
       # TODO: append instead of clobber or something (probably use a more appendable format...)
       job recv
