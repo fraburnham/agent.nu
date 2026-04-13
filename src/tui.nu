@@ -4,7 +4,7 @@ export def header []: nothing -> nothing {
 }
 
 def prompt []: nothing -> int {
-  job spawn { || #--tag prompt { ||
+  job spawn --description prompt { ||
     mut buf = ""
     mut reply_to_job_id = 0
     mut ready_for_input = false
@@ -31,8 +31,8 @@ def prompt []: nothing -> int {
         continue
       }
 
-      match $event.type {
-        "ready-for-input" => {
+      match $event {
+        {type: "ready-for-input"} => {
           $ready_for_input = true
           $reply_to_job_id = $event.reply_to_job_id
 
@@ -40,16 +40,13 @@ def prompt []: nothing -> int {
           print -n $"(ansi red)>(ansi reset) ($buf)"
         }
 
-        "paste" => {
+        {type: "paste"} => {
           $buf += $event.content
           print -n $event.content
         }
 
-        "key" => {
+        {type: "key", code: $c, modifiers: $m} => {
           # TODO: handle navigation keys (up for recall, left to go back in the buf (this makes updating fun!) etc)
-          let c = $event
-          | get code?
-
           match $c {
             "enter" => {
               print ""
@@ -131,7 +128,7 @@ def handle [
 }
 
 export def run []: nothing -> int {
-  job spawn { || #--tag tui { ||
+  job spawn --description tui { ||
     let prompt_job_id = prompt
 
     header

@@ -10,7 +10,7 @@ export def "available to agent" [
 }
 
 export def "run handler" [] {
-  job spawn { || #--tag tool-use-handler { ||
+  job spawn --description tool-use-handler { ||
     loop {
       let message: record<context: record, reply_to_job_id: int> = job recv
       let context: record = $message.context
