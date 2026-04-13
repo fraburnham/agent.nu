@@ -2,7 +2,7 @@
 
 use src/agent-loop.nu
 use src/context
-use src/tui.nu
+use src/tui
 use src/tools.nu
 
 def main [] {
