@@ -57,6 +57,7 @@ export def main []: nothing -> int {
             }
       
             "backspace" => {
+              # TODO: don't backspace if the buffer is empty
               $buf = $buf
               | str substring ..-2
 

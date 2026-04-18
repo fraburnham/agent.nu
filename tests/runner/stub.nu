@@ -1,3 +1,4 @@
+# TODO: docs
 
 export def main [
   closure_var_name: string
