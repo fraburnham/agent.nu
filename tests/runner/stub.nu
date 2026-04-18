@@ -12,7 +12,7 @@ export def main [
   | default {
     { |...args|
       {
-        args: ...$args
+        args: $args
         in: $in
       }
     }
