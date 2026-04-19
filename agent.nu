@@ -1,12 +1,17 @@
 #!/usr/bin/env nu
 
 use src/agent-loop.nu
+use src/config.nu
 use src/context
 use src/tui
 use src/tools.nu
 
-def main [] {
-  agent-loop run (tui run) (tools run handler) (context initial high-level-leader)
+def main [
+  --config-file: string = "~/.agent.nu/config.json"
+] {
+  let config = config load $config_file
+
+  agent-loop run $config (tui run) (tools run handler $config) (context initial high-level-leader)
 
   loop {
     match (job recv) { # Wait for an exit command from the tui

@@ -9,7 +9,9 @@ export def "available to agent" [
   utils available to agent $tool_schemas $agent
 }
 
-export def "run handler" [] {
+export def "run handler" [
+  config: record
+] {
   job spawn --description tool-use-handler { ||
     loop {
       let message: record<context: record, reply_to_job_id: int> = job recv
@@ -33,8 +35,8 @@ export def "run handler" [] {
           content: (
             match $function.name {
               "delegate-work" => {
-                let tool_handler_job_id = run handler
-                let response = delegate-work $tool_handler_job_id $function.arguments
+                let tool_handler_job_id = run handler $config
+                let response = delegate-work $config $tool_handler_job_id $function.arguments
 
                 job kill $tool_handler_job_id
                 $response

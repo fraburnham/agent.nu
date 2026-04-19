@@ -3,12 +3,13 @@ use utils.nu
 use ../context
 
 export def main [
+  config: record
   tool_handler_job_id: int
   params: record<worker: string, task: string>
 ]: nothing -> string {
   mut message = {}
 
-  agent-loop run (job id) $tool_handler_job_id (
+  agent-loop run $config (job id) $tool_handler_job_id (
     context initial $params.worker
     | context append prompt $params.task
   )

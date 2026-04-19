@@ -4,6 +4,7 @@ use runner
 module tools/delegate-work.nu {
   # idk why `export def main` doesn't work here...
   export def delegate-work [
+    config: record
     reply_to_job_id: int
     params: record
   ] {
@@ -16,7 +17,7 @@ overlay use tools/delegate-work.nu
 use ../src/tools.nu
 
 def "test the tool runner executes tools" [] {
-  let tool_handler_job_id = tools run handler
+  let tool_handler_job_id = tools run handler {}
 
   {
     context: {
@@ -50,7 +51,7 @@ def "test the tool runner executes tools" [] {
 }
 
 def "test the tool runner ignores unknown tools" [] {
-  let tool_handler_job_id = tools run handler
+  let tool_handler_job_id = tools run handler {}
 
   {
     context: {

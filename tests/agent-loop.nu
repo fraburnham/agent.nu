@@ -34,7 +34,7 @@ use ../src/agent-loop.nu
 def start-agent [] {
   job flush
 
-  let agent_job_id = agent-loop run (job id) (job id) (context initial high-level-leader)
+  let agent_job_id = agent-loop run {ollama_host: "http://mock.ollama.host"} (job id) (job id) (context initial high-level-leader)
   # Wait for agent to become ready
   let initial_context = job recv --timeout 0.1sec
 

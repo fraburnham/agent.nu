@@ -4,22 +4,22 @@ use context
 use tools/utils.nu
 
 def advance [
+  config: record
   history_worker_id: int
   tool_handler_job_id: int
   --model: string
-  --host: string
 ]: record -> record {
-  api chat --model $model --host $host
+  api chat --model $model --host $config.ollama_host
   | utils use $tool_handler_job_id
   | history update $history_worker_id
 }
 
 export def run [
+  config: record
   manager_job_id: int
   tool_handler_job_id: int
   initial_context: record
   --model: string = "qwen3.5:0.8b-bf16" #"gpt-oss:20b" #"gemma4:e2b" #"qwen3.5:9b" #"qwen3.5:9b-bf16"
-  --host: string = "http://workload.api.llm.skynet"
 ] {
   job spawn --description agent-loop { ||
     # TODO: token use tracking (iirc ollama is responding with all kinds of metrics, use them to track context fullness)
@@ -71,7 +71,7 @@ export def run [
           $context
         }
       }
-      | advance $history_worker_id $tool_handler_job_id --model $model --host $host
+      | advance $config $history_worker_id $tool_handler_job_id --model $model
     }
   }
 }
