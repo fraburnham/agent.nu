@@ -14,11 +14,13 @@ export def use [
   $context
 }
 
-export def "available to agent" [
-  tool_schemas: record
-  agent: string
+export def "available to persona" [
+  config: record
+  persona: string
 ] {
-  $tool_schemas
-  | get $agent
+  open $"($config.personas_path)/($persona)/persona.json"
+  | get tools
+  | each { |tool_name|
+    open $"($config.tools_path)/($tool_name)/definition.json"
+  }
 }
-

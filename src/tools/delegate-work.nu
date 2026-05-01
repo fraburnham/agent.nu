@@ -10,7 +10,7 @@ export def main [
   mut message = {}
 
   agent-loop run $config (job id) $tool_handler_job_id (
-    context initial $params.worker
+    context initial $config $params.worker
     | context append prompt $params.task
   )
 

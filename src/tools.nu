@@ -1,13 +1,6 @@
-use tools/definitions.nu [tool_schemas]
 use tools/delegate-work.nu
 use tools/utils.nu
 use context/manage.nu
-
-export def "available to agent" [
-  agent: string
-] {
-  utils available to agent $tool_schemas $agent
-}
 
 export def "run handler" [
   config: record
