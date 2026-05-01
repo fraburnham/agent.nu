@@ -38,7 +38,6 @@ const mock_config = {
   tools_path: "./src/tools"
 }
 
-
 def start-agent [] {
   job flush
 

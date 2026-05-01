@@ -1,0 +1,23 @@
+{
+  "type": "function",
+  "function": {
+    "name": "mock",
+    "description": "Mocky mockerton.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "mock": {
+          "description": "mock again",
+          "type": "string",
+          "enum": [
+            "oh-mock"
+          ]
+        }
+      },
+      "required": [
+        "mock"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

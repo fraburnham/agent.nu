@@ -1,0 +1,7 @@
+#!/usr/bin/env -S nu --stdin
+
+use ../../../runner
+
+export def main [] {
+  runner stub STUB_DELEGATE_WORK --pipe-passthrough 
+}

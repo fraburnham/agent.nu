@@ -1,15 +1,18 @@
-use ../agent-loop.nu
-use utils.nu
-use ../context
+#!/usr/bin/env -S nu --stdin
 
-export def main [
-  config: record
-  tool_handler_job_id: int
-  params: record<worker: string, task: string>
-]: nothing -> string {
+use ../../agent-loop.nu
+use ../utils.nu
+use ../../context
+use ../../tools.nu
+
+export def main [] {
+  let input = $in | from json
+  let config = $input.config
+  let params = $input.tool_call.function.arguments
+
   mut message = {}
 
-  agent-loop run $config $params.worker (job id) $tool_handler_job_id (
+  agent-loop run $config $params.worker (job id) (tools run handler $config) (
     context initial $config $params.worker
     | context append prompt $params.task
   )
@@ -36,3 +39,4 @@ export def main [
   | last
   | get content
 }
+

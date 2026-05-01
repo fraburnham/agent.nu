@@ -1,0 +1,6 @@
+{
+    "model": "mock-model",
+    "tools": [
+        "mock"
+    ]
+}

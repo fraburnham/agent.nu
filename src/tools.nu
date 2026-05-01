@@ -1,4 +1,3 @@
-use tools/delegate-work.nu
 use tools/utils.nu
 use context/manage.nu
 
@@ -21,25 +20,35 @@ export def "run handler" [
       let context = $tool_calls
       | reduce --fold $context { |tool_call, context|
         let function = $tool_call.function
+        let tool_path = $"($config.tools_path)/($function.name)/run"
 
         {
           id: $tool_call.id?
           role: "tool"
           content: (
-            match $function.name {
-              "delegate-work" => {
-                let tool_handler_job_id = run handler $config
-                let response = delegate-work $config $tool_handler_job_id $function.arguments
-
-                job kill $tool_handler_job_id
-                $response
+            if not ($tool_path | path exists) {
+              "No matching tool found. Retrying the call will not help."
+            } else {
+              {
+                config: $config
+                tool_call: $tool_call
               }
+              | to json
+              | run-external $"($config.tools_path)/($function.name)/run"
+              | complete
+              | do {
+                let result = $in
 
-              _ => {
-                "No matching tool found."
+                if $result.exit_code == 0 {
+                  $result.stdout
+                } else {
+                  [$result.stdout, $result.stderr]
+                  | str join "\n"
+                }
               }
             }
           )
+
         }
         | manage append response $context
       }
@@ -52,3 +61,4 @@ export def "run handler" [
     }
   }
 }
+
