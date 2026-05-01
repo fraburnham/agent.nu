@@ -3,7 +3,7 @@
 const defaults = {
   base_persona: "high-level-leader"
   personas_path: "./personas"
-  tools_path: "./src/tools"
+  tools_path: "./tools"
 }
 
 export def load [

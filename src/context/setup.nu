@@ -1,5 +1,5 @@
 use ../personas.nu
-use ../tools/utils.nu
+use ../tools.nu
 
 export def initial [
   config: record
@@ -10,6 +10,6 @@ export def initial [
       role: "system"
       content: (personas system prompt $config $persona)
     }]
-    tools: (utils available to persona $config $persona)
+    tools: (tools available to persona $config $persona)
   }
 }

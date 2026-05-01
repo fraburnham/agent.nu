@@ -1,7 +1,7 @@
 use api.nu
 use history.nu
 use context
-use tools/utils.nu
+use tools.nu
 use personas.nu
 
 def advance [
@@ -11,7 +11,7 @@ def advance [
   tool_handler_job_id: int
 ]: record -> record {
   api chat $config $persona
-  | utils run $tool_handler_job_id
+  | tools run $tool_handler_job_id
   | history update $history_worker_id
 }
 

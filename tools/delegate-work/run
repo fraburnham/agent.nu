@@ -1,9 +1,9 @@
 #!/usr/bin/env -S nu --stdin
 
-use ../../agent-loop.nu
-use ../utils.nu
-use ../../context
-use ../../tools.nu
+use ../../src/agent-loop.nu
+use ../../src/tools.nu
+use ../../src/context
+use ../../src/tools.nu
 
 export def main [] {
   let input = $in | from json
