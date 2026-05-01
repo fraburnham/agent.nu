@@ -2,20 +2,22 @@ use api.nu
 use history.nu
 use context
 use tools/utils.nu
+use personas.nu
 
 def advance [
   config: record
+  persona: string
   history_worker_id: int
   tool_handler_job_id: int
-  --model: string
 ]: record -> record {
-  api chat --model $model --host $config.ollama_host
-  | utils use $tool_handler_job_id
+  api chat $config $persona
+  | utils run $tool_handler_job_id
   | history update $history_worker_id
 }
 
 export def run [
   config: record
+  persona: string
   manager_job_id: int
   tool_handler_job_id: int
   initial_context: record
@@ -71,7 +73,7 @@ export def run [
           $context
         }
       }
-      | advance $config $history_worker_id $tool_handler_job_id --model $model
+      | advance $config $persona $history_worker_id $tool_handler_job_id
     }
   }
 }

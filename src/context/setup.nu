@@ -1,15 +1,15 @@
-use ../personas.nu [personas]
+use ../personas.nu
 use ../tools/utils.nu
 
 export def initial [
-  tool_schemas: record
-  agent: string
+  config: record
+  persona: string
 ] {
   {
     messages: [{
       role: "system"
-      content: ($personas | get $agent)
+      content: (personas system prompt $config $persona)
     }]
-    tools: (utils available to agent $tool_schemas $agent)
+    tools: (utils available to persona $config $persona)
   }
 }

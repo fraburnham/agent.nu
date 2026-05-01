@@ -1,4 +1,8 @@
-export def use [
+# TODO: docs
+
+use ../personas.nu
+
+export def run [
   tool_handler_job_id: int
 ]: record -> record {
   let context = $in
@@ -18,7 +22,7 @@ export def "available to persona" [
   config: record
   persona: string
 ] {
-  open $"($config.personas_path)/($persona)/persona.json"
+  personas config $config $persona
   | get tools
   | each { |tool_name|
     open $"($config.tools_path)/($tool_name)/definition.json"

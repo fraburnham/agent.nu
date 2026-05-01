@@ -1,12 +1,13 @@
-use ../tools/definitions.nu [tool_schemas]
 use setup.nu ["initial"]
 
 export use manage.nu *
 
 alias _initial = initial
 
+# This seems like pointless indirection now...
 export def initial [
+  config: record
   agent: string
 ] {
-  _initial $tool_schemas $agent
+  _initial $config $agent
 }

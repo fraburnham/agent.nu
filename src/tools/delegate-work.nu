@@ -9,7 +9,7 @@ export def main [
 ]: nothing -> string {
   mut message = {}
 
-  agent-loop run $config (job id) $tool_handler_job_id (
+  agent-loop run $config $params.worker (job id) $tool_handler_job_id (
     context initial $config $params.worker
     | context append prompt $params.task
   )
@@ -36,4 +36,3 @@ export def main [
   | last
   | get content
 }
-
