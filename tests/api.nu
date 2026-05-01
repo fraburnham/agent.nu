@@ -7,6 +7,12 @@ export def --wrapped "http post" [...args] {
 
 use ../src/api.nu
 
+const mock_persona = "high-level-leader"
+const mock_config = {
+  ollama_host: "http://mock.host"
+  personas_path: "./personas"
+}
+
 def "test that chat appends the response onto the context" [] {
   with-env {
     STUB_HTTP_POST: { |...args|
@@ -19,7 +25,7 @@ def "test that chat appends the response onto the context" [] {
     }
   } {
     {messages: []}
-    | api chat --model "mock-model" --host "mock-host"
+    | api chat $mock_config $mock_persona
     | do {
       assert equal "mock" $in.messages.0.content
       assert equal "assistant" $in.messages.0.role
@@ -39,7 +45,7 @@ def "test that chat does not return a context with stream or model" [] {
     }
   } {
     {messages: []}
-    | api chat --model "mock-model" --host "mock-host"
+    | api chat $mock_config $mock_persona
     | do {
       assert ($in.stream? | is-empty)
       assert ($in.model? | is-empty)
@@ -62,7 +68,7 @@ def "test that chat appends the response onto the context when tool calls are pr
     }
   } {
     {messages: []}
-    | api chat --model "mock-model" --host "mock-host"
+    | api chat $mock_config $mock_persona
     | do {
       assert equal "" $in.messages.0.content
       assert equal "assistant" $in.messages.0.role
@@ -83,9 +89,10 @@ def "test that chat sets model and stream params" [] {
     }
   } {
     {messages: []}
-    | api chat --model "mock-model" --host "mock-host"
+    | api chat $mock_config $mock_persona
     | do {
-      assert equal "mock-model" $in.messages.0.content.model
+      # Model from default high-level-leader persona config
+      assert equal "gemma4:26b-a4b-it-q4_K_M" $in.messages.0.content.model
       assert equal false $in.messages.0.content.stream
     }
   }

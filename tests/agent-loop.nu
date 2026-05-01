@@ -10,7 +10,7 @@ module api.nu {
 }
 
 module tools/utils.nu {
-  export def --wrapped "utils use" [...args] {
+  export def --wrapped "utils run" [...args] {
     runner stub STUB_UTILS_USE --pipe-passthrough ...$args
   }
 }
@@ -31,10 +31,18 @@ overlay use history.nu
 
 use ../src/agent-loop.nu
 
+const mock_persona = "high-level-leader"
+const mock_config = {
+  ollama_host: "http://mock.ollama.host"
+  personas_path: "./personas"
+  tools_path: "./src/tools"
+}
+
+
 def start-agent [] {
   job flush
 
-  let agent_job_id = agent-loop run {ollama_host: "http://mock.ollama.host"} (job id) (job id) (context initial high-level-leader)
+  let agent_job_id = agent-loop run $mock_config $mock_persona (job id) (job id) (context initial $mock_config $mock_persona)
   # Wait for agent to become ready
   let initial_context = job recv --timeout 0.1sec
 
@@ -115,7 +123,7 @@ def "test agent-loop updates history" [] {
     STUB_HISTORY_UPDATE: { |...args|
       let context = $in
 
-      assert equal (context initial high-level-leader) $context
+      assert equal (context initial $mock_config high-level-leader) $context
 
       {
         in: $in
@@ -205,7 +213,7 @@ def "test agent-loop sends a chat message" [] {
     STUB_API_CHAT: { |...args|
       let context = $in
 
-      assert equal (context initial high-level-leader) $context
+      assert equal (context initial $mock_config high-level-leader) $context
       
       {
         in: $in
