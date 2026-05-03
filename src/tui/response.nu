@@ -14,7 +14,7 @@ export def main [
     print $"(ansi erase_entire_line)(ansi --escape "1G")"
     print -n $"(char backspace)(char backspace)(char backspace)" # Matches prompt length (TODO do gooder)
     if (which batcat | is-not-empty) {
-      print -n $"($response.content | ^batcat -l md -n --color always)"
+      print $"($response.content | ^batcat -l md -n --color always --terminal-width (term size | get columns) --wrap character)"
     } else {
       print -n $"(ansi blue)*(ansi reset) ($response.content)"
     }
