@@ -9,8 +9,8 @@ module api.nu {
   }
 }
 
-module tools/utils.nu {
-  export def --wrapped "utils run" [...args] {
+module tools.nu {
+  export def --wrapped "tools run" [...args] {
     runner stub STUB_UTILS_USE --pipe-passthrough ...$args
   }
 }
@@ -26,7 +26,7 @@ module history.nu {
 }
 
 overlay use api.nu
-overlay use tools/utils.nu
+overlay use tools.nu
 overlay use history.nu
 
 use ../src/agent-loop.nu
@@ -34,8 +34,8 @@ use ../src/agent-loop.nu
 const mock_persona = "high-level-leader"
 const mock_config = {
   ollama_host: "http://mock.ollama.host"
-  personas_path: "./personas"
-  tools_path: "./src/tools"
+  personas_path: "./tests/mock/personas"
+  tools_path: "./tests/mock/tools"
 }
 
 def start-agent [] {

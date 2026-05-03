@@ -2,15 +2,15 @@ use std/assert
 use runner
 
 use ../src/personas.nu
-use ../src/tools/utils.nu
+use ../src/tools.nu
 
 use ../src/context
 
 const mock_persona = "high-level-leader"
 const mock_config = {
   ollama_host: "http://mock.host"
-  personas_path: "./personas"
-  tools_path: "./src/tools"
+  personas_path: "./tests/mock/personas"
+  tools_path: "./tests/mock/tools"
 }
 
 def "test that responses are appended to context correctly" [] {
@@ -44,7 +44,7 @@ def "test that initial context is set up with a system message and appropriate t
 
   assert equal "system" $context.messages.0.role
   assert equal (personas system prompt $mock_config $mock_persona) $context.messages.0.content
-  assert equal (utils available to persona $mock_config $mock_persona) $context.tools
+  assert equal (tools available to persona $mock_config $mock_persona) $context.tools
 }
 
 export def main [] {
