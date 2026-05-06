@@ -33,7 +33,7 @@ export def "run handler" [
                 tool_call: $tool_call
               }
               | to json
-              | run-external $"($config.tools_path)/($function.name)/run"
+              | run-external ($"($config.tools_path)/($function.name)/run" | path expand)
               | complete
               | do {
                 let result = $in
@@ -84,6 +84,6 @@ export def "available to persona" [
   personas config $config $persona
   | get tools
   | each { |tool_name|
-    open $"($config.tools_path)/($tool_name)/definition.json"
+    open ($"($config.tools_path)/($tool_name)/definition.json" | path expand)
   }
 }

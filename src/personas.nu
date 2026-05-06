@@ -9,14 +9,14 @@ export def "system prompt" [
   config: record
   persona: string
 ] {
-  open --raw $"($config.personas_path)/($persona)/PERSONA.md"
+  open --raw ($"($config.personas_path)/($persona)/PERSONA.md" | path expand)
 }
 
 export def config [
   config: record
   persona: string
 ] {
-  open $"($config.personas_path)/($persona)/persona.json"
+  open ($"($config.personas_path)/($persona)/persona.json" | path expand)
 }
 
 export def model [

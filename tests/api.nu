@@ -10,7 +10,8 @@ use ../src/api.nu
 const mock_persona = "high-level-leader"
 const mock_config = {
   ollama_host: "http://mock.host"
-  personas_path: "./personas"
+  personas_path: "./tests/mock/personas"
+  tools_path: "./tests/mock/tools"
 }
 
 def "test that chat appends the response onto the context" [] {
