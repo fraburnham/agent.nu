@@ -1,6 +1,8 @@
 export use prompt.nu
 export use response.nu
 
+use ../context
+
 export def header []: nothing -> nothing {
   print ""
   print $"(ansi bo)Type '/exit' to quit(ansi reset)"
@@ -12,7 +14,9 @@ def handle [
   let message = $in
   let context = $in.context
 
-  if (response $context) or (($context.messages? | length) == 1) {
+  response $context
+
+  if (($context | context get state) == "awaiting-controller-input") {
     {
       type: "ready-for-input"
       reply_to_job_id: $message.reply_to_job_id

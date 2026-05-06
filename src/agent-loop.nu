@@ -21,13 +21,12 @@ export def run [
   manager_job_id: int
   tool_handler_job_id: int
   initial_context: record
-  --model: string = "qwen3.5:0.8b-bf16" #"gpt-oss:20b" #"gemma4:e2b" #"qwen3.5:9b" #"qwen3.5:9b-bf16"
 ] {
   job spawn --description agent-loop { ||
     # TODO: token use tracking (iirc ollama is responding with all kinds of metrics, use them to track context fullness)
     # TODO: config file to pull model and params (temp/top_p/context length/etc) from
 
-    let history_worker_id = history start worker # TODO: this needs to be cleaned up or it'll be a leak (so probabably have the manager start it...)
+    let history_worker_id = history start worker
     mut context: record = $initial_context
   
     loop {
@@ -49,6 +48,8 @@ export def run [
             # TODO: /context-remove-latest-response
             # TODO: /context-remove-latest-prompt
             "/exit" => { # So now the agent loop has to handle these again?
+              job kill $history_worker_id
+
               "/exit"
               | job send 0
 
@@ -57,7 +58,7 @@ export def run [
 
             $user_input => {
               $context
-              | context append prompt $message.user_input
+              | context append prompt $user_input
             }
           }
         }
@@ -77,3 +78,4 @@ export def run [
     }
   }
 }
+

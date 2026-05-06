@@ -1,9 +1,12 @@
 #!/usr/bin/env -S nu --stdin
 
+# TODO: docs
+# TODO: tests
+
 use ../../src/agent-loop.nu
 use ../../src/tools.nu
 use ../../src/context
-use ../../src/tools.nu
+use ../../src/tui/response.nu
 
 export def main [] {
   let input = $in | from json
@@ -24,10 +27,7 @@ export def main [] {
     #       The timeout will have to be long enough to include _loading_ the model, so maybe an intelligent thing can know
     #       if the model is loaded before it "starts" the timer...
 
-    let last_response_from_context = $message.context.messages
-    | last
-
-    if ($last_response_from_context.tool_calls? | is-empty) and ($last_response_from_context.role? == "assistant") {
+    if (($message.context | context get state) == "awaiting-controller-input") {
       break
     } else {
       $message
