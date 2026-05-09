@@ -86,7 +86,7 @@ def "test that key events are added to the buffer" [] {
   # Await a message
   let message = job recv --timeout 0.1sec
 
-  assert equal "k" $message.user_input
+  assert equal {role: user, content: "k"} $message.user_input
 }
 
 def "test that backspace updates the view and buffer" [] {
@@ -134,12 +134,15 @@ def "test that backspace updates the view and buffer" [] {
   # Await a message
   let message = job recv --timeout 0.1sec
 
-  assert equal "n" $message.user_input
+  assert equal {role: "user", content: "n"} $message.user_input
 }
 
 def "test that paste events are added to the buffer" [] {
   let prompt_job_id = tui prompt
-  let expected = "This is only a test"
+  let expected = {
+    role: user
+    content: "This is only a test"
+  }
 
   # Give the worker a job to reply to
   {
@@ -151,7 +154,7 @@ def "test that paste events are added to the buffer" [] {
   # Send paste
   {
     type: paste
-    content: $expected
+    content: $expected.content
   }
   | job send $prompt_job_id
 

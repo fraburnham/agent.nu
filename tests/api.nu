@@ -28,8 +28,8 @@ def "test that chat appends the response onto the context" [] {
     {messages: []}
     | api chat $mock_config $mock_persona
     | do {
-      assert equal "mock" $in.messages.0.content
-      assert equal "assistant" $in.messages.0.role
+      assert equal "mock" $in.content
+      assert equal "assistant" $in.role
     }
   }
 }
@@ -71,9 +71,9 @@ def "test that chat appends the response onto the context when tool calls are pr
     {messages: []}
     | api chat $mock_config $mock_persona
     | do {
-      assert equal "" $in.messages.0.content
-      assert equal "assistant" $in.messages.0.role
-      assert equal ["mock"] $in.messages.0.tool_calls
+      assert equal "" $in.content
+      assert equal "assistant" $in.role
+      assert equal ["mock"] $in.tool_calls
     }
   }
 }
@@ -93,8 +93,8 @@ def "test that chat sets model and stream params" [] {
     | api chat $mock_config $mock_persona
     | do {
       # Model from default high-level-leader persona config
-      assert equal "gemma4:26b-a4b-it-q4_K_M" $in.messages.0.content.model
-      assert equal false $in.messages.0.content.stream
+      assert equal "mock-model" $in.content.model
+      assert equal false $in.content.stream
     }
   }
 }

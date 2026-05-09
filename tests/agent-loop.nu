@@ -10,15 +10,22 @@ module api.nu {
 }
 
 module tools.nu {
-  export def --wrapped "tools run" [...args] {
-    runner stub STUB_UTILS_USE --pipe-passthrough ...$args
+  export def --wrapped "tools handle calls" [...args] {
+    let input = $in
+
+    if ($env.STUB_TOOLS_HANDLE_CALLS? | is-empty) {
+      $env.STUB_TOOLS_HANDLE_CALLS = { |...args|
+        []
+      }
+    }
+
+    $input
+    | runner stub STUB_TOOLS_HANDLE_CALLS --pipe-passthrough ...$args
   }
 }
 
-module history.nu {
-  export def "history start worker" [...args] {
-    1
-  }
+module context {
+  export use ../src/context *
 
   export def --wrapped "history update" [...args] {
     runner stub STUB_HISTORY_UPDATE --pipe-passthrough ...$args
@@ -27,7 +34,7 @@ module history.nu {
 
 overlay use api.nu
 overlay use tools.nu
-overlay use history.nu
+overlay use context
 
 use ../src/agent-loop.nu
 
@@ -38,14 +45,29 @@ const mock_config = {
   tools_path: "./tests/mock/tools"
 }
 
-def start-agent [] {
+def start-agent [
+  user_message: record
+] {
   job flush
 
-  let agent_job_id = agent-loop run $mock_config $mock_persona (job id) (job id) (context initial $mock_config $mock_persona)
-  # Wait for agent to become ready
-  let initial_context = job recv --timeout 0.1sec
+  let initial_context = context initial $mock_config $mock_persona
+  | do {
+    let context = $in
 
-  [$agent_job_id, $initial_context]
+    if ($user_message | is-not-empty) {
+      $user_message
+      | context append message $context
+    } else {
+      $context
+    }
+  }
+
+  let agent_job_id = agent-loop run $mock_config $mock_persona (job id) $initial_context
+
+  # Await first send from loop start
+  job recv --timeout 0.1sec
+
+  $agent_job_id
 }
 
 def stop-agent [
@@ -56,12 +78,14 @@ def stop-agent [
 }
 
 def "test agent-loop can be killed with an exit message" [] {
-  let agent_job_id = start-agent
-  | first
+  let agent_job_id = start-agent {}
 
   {
     type: user-input
-    user_input: "/exit"
+    user_input: {
+      role: user
+      content: "/exit"
+    }
   }
   | job send $agent_job_id
 
@@ -76,72 +100,67 @@ def "test agent-loop can be killed with an exit message" [] {
   )
 }
 
-# ignore
-def "test agent-loop does not leak a history worker" [] { # TODO
-  let agent_job_id = start-agent
-  | first
+def "test agent-loop does not leak a history worker" [] {
+  let agent_job_id = start-agent {}
 
+  # Make sure two jobs started
+  assert equal 2 (job list | length)
+  
   {
     type: user-input
-    user_input: "/exit"
+    user_input: {
+      role: user
+      content: "/exit"
+    }
   }
   | job send $agent_job_id
 
-  # Wait for agent to handle message
+  # Wait for agent to send exit message to controller
   job recv --timeout 0.1sec
 
+  # Make sure all jobs got cleaned up
   assert (
     job list
-    | where tag == history-worker
     | is-empty
   )
 }
 
-def "test agent-loop ignores unknown message types" [] {
-  let start_result = start-agent
-  let agent_job_id = $start_result
-  | first
-  let initial_context = $start_result
-  | last
-
-  {
-    type: whoa
-    whoa: "This is wild"
-  }
-  | job send $agent_job_id
-
-  let response = job recv --timeout 0.1sec
-
-  assert equal $initial_context $response
-
-  stop-agent $agent_job_id
-}
-
 def "test agent-loop updates history" [] {
+  let user_message = {
+    role: user
+    content: mock
+  }
+
+  let assistant_message = {
+    role: assistant
+    content: mock
+  }
+  
+  let possible_messages = context initial $mock_config high-level-leader
+  | get messages
+  | append $user_message
+  | append $assistant_message
+  
   with-env {
-    STUB_HISTORY_UPDATE: { |...args|
-      let context = $in
-
-      assert equal (context initial $mock_config high-level-leader) $context
-
+    STUB_API_CHAT: { |...args|
       {
-        in: $in
+        in: $assistant_message
       }
     }
-  } {
-    let start_result = start-agent
-    let agent_job_id = $start_result
-    | first
-    let initial_context = $start_result
-    | last
+    
+    STUB_HISTORY_UPDATE: { |...args|
+      let message = $in
 
-    {
-      type: IGNORE-ME
+      assert ($message in $possible_messages)
+
+      {in: $message}
     }
-    | job send $agent_job_id
+  } {
+    let agent_job_id = start-agent $user_message
 
+    # agent-loop sends a message to the controller each time it advances
     job recv --timeout 0.1sec
-
+    
     stop-agent $agent_job_id
   }
 }
@@ -169,17 +188,10 @@ def "test agent-loop handles tool use" [] {
 
   with-env {
     STUB_API_CHAT: { |...args|
-      let context = $in
-
-      {
-        in: (
-          $response_with_tool_call
-          | context append response $context
-        )
-      }
+      {in: $response_with_tool_call}
     }
 
-    STUB_UTILS_USE: { |...args|
+    STUB_TOOLS_HANDLE_CALLS: { |...args|
       let context = $in
 
       let actual_tool_calls = $context.messages
@@ -189,17 +201,14 @@ def "test agent-loop handles tool use" [] {
       assert equal $tool_calls $actual_tool_calls
 
       {
-        in: $context
+        in: []
       }
     }
   } {
-    let agent_job_id = start-agent
-    | first
-
-    {
-      type: IGNORE-ME
+    let agent_job_id = start-agent {
+      role: user
+      content: mock
     }
-    | job send $agent_job_id
 
     job recv --timeout 0.1sec
 
@@ -208,30 +217,41 @@ def "test agent-loop handles tool use" [] {
 }
 
 def "test agent-loop sends a chat message" [] {
+  let user_message = {
+      role: user
+      content: "mock"
+  }
+  
   with-env {
     STUB_API_CHAT: { |...args|
       let context = $in
+      let expected = $user_message
+      | context append message (context initial $mock_config high-level-leader)
 
-      assert equal (context initial $mock_config high-level-leader) $context
+      assert equal $expected $context
       
       {
-        in: $in
+        in: {
+          role: "assistant"
+          content: "mock content"
+          thinking: "mock thinking"
+        }
       }
     }
   } {
-    let agent_job_id = start-agent
-    | first
+    let agent_job_id = start-agent $user_message
 
-    {
-      type: IGNORE-ME
-    }
-    | job send $agent_job_id
-
+    # Await the agent loop sending the api response to the controller
     job recv --timeout 0.1sec
 
     stop-agent $agent_job_id
   }
 }
+
+# TODO: test that "non-terminal" responses are advanced
+# thinking but no content
+# tool calls but no content
+# others?
 
 export def main [] {
   runner run

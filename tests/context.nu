@@ -13,30 +13,15 @@ const mock_config = {
   tools_path: "./tests/mock/tools"
 }
 
-def "test that responses are appended to context correctly" [] {
+def "test that messages are appended to context correctly" [] {
   let context = {
     role: "assistant"
     content: "mock"
   }
-  | context append response (context initial $mock_config $mock_persona)
+  | context append message (context initial $mock_config $mock_persona)
 
   assert equal "mock" $context.messages.1.content
   assert equal "assistant" $context.messages.1.role
-}
-
-def "test that prompts are appended to context correctly" [] {
-  let prompt = "This is only a test"
-
-  let context = context initial $mock_config $mock_persona
-  | context append prompt $prompt
-
-  assert equal $prompt $context.messages.1.content
-  assert equal "user" $context.messages.1.role
-
-  let context = context initial $mock_config $mock_persona
-  | context append prompt ""
-
-  assert equal (context initial $mock_config $mock_persona) $context
 }
 
 def "test that initial context is set up with a system message and appropriate tools" [] {
@@ -50,3 +35,5 @@ def "test that initial context is set up with a system message and appropriate t
 export def main [] {
   runner run
 }
+
+# TODO tests for history update

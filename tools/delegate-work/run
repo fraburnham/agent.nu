@@ -3,10 +3,10 @@
 # TODO: docs
 # TODO: tests
 
+use std/log
+
 use ../../src/agent-loop.nu
-use ../../src/tools.nu
 use ../../src/context
-use ../../src/tui/response.nu
 
 export def main [] {
   let input = $in | from json
@@ -15,9 +15,12 @@ export def main [] {
 
   mut message = {}
 
-  agent-loop run $config $params.worker (job id) (tools run handler $config) (
-    context initial $config $params.worker
-    | context append prompt $params.task
+  agent-loop run $config $params.worker (job id) (
+    {
+      role: "user"
+      content: $params.task
+    }
+    | context append message (context initial $config $params.worker)
   )
 
   loop {
@@ -27,11 +30,16 @@ export def main [] {
     #       The timeout will have to be long enough to include _loading_ the model, so maybe an intelligent thing can know
     #       if the model is loaded before it "starts" the timer...
 
-    if (($message.context | context get state) == "awaiting-controller-input") {
-      break
-    } else {
-      $message
-      | job send $message.reply_to_job_id
+    match ($message.context | context get state) {
+      "awaiting-model" => {
+        $message
+        | job send $message.reply_to_job_id
+        # TODO: the agent-loop should handle this awaiting
+      }
+
+      "awaiting-controller-input" => {
+        break
+      }
     }
   }
 

@@ -18,7 +18,7 @@ export def "get state" []: record -> string {
       "awaiting-controller-input"      
     }
 
-    ["user", _, _, _] | _ => {
+    ["user", _, _, _] | ["tool", true, _, _] | _ => {
       "awaiting-model"
     }
   }

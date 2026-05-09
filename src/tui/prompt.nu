@@ -48,7 +48,10 @@ export def main []: nothing -> int {
 
               {
                 type: "user-input"
-                user_input: $buf
+                user_input: {
+                  role: "user"
+                  content: $buf
+                }
               }
               | job send $reply_to_job_id
 

@@ -1,25 +1,6 @@
-export def "append prompt" [
-  prompt: oneof<string, nothing>
-]: record -> record {
-  let context = $in
-
-   if ($prompt | is-not-empty) {
-    $context
-    | upsert messages { |context|
-      $context.messages
-      | append {
-        role: "user"
-        content: $prompt
-      }
-    }
-  } else {
-    $context
-  }
-}
-
-export def "append response" [
+export def "append message" [
   context: record
-]: record -> record {
+]: record<role: string> -> record { # raw message/response in -> context out
   let response: record = $in
 
   $context
@@ -28,3 +9,4 @@ export def "append response" [
     | append $response
   }
 }
+
