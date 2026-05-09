@@ -2,8 +2,6 @@
 
 An agent harness written in nushell against the ollama api
 
-** Agent strategy
-
 If an MoE model can activate 17b parameters per expert and get decent performance can smaller models be fine tuned (or not) and used across time to the same effect?
 
 A hieracrchical team of LLMs. A high-level leader who delegates to specific leaders. Specific leaders prepare delegation prompts for specific workers. Specific workers
@@ -11,54 +9,49 @@ may prepare prompts for specific tool callers.
 
 Orchestration code that manages context for the team and batches requests to maximize throughput.
 
+** Config
+
+TODO: describe config interface
+
+** Personas
+
+TODO: describe personas interface
+
 ** Tools
 
-*** High Level Leader's Toolbox
-
-This agent keeps basically nothing in context. It sends work out to others like a "web-researcher" or "engineering-leader", gets responses back from them
-and then delegates more work out. It's context is controlled primarily by the user.
-
-- Delegate
-  - Needs to supply an enum of delegatees
-  - Which model runs for a delegate will come from the config file
-  - Which persona a a delegate uses will come from the config file
-
-
-*** Code Researcher's Toolbox
-
-This agent searches on the filesystem for code relevant to some request.
-
-- File Search
-- Summarize Contents
-  - Delegates to another agent
-
+TODO: describe tools interface
 
 ** TODO
 
-- Tests
-- Improve code org
-- Personas from md files
-- Config file
-  - Which model for each agent type?
-    - Model settings per agent type
-  - Which persona for each agent type?
-- Track context usage
-  - Would be best to know the model's context limits (or maybe set them...)
+- Fix the history worker setup so agents are resumable
+  - Means the history needs to know some extra details (or a better storage structure needs to exist...)
+  - Make a new dir for each time `agent.nu` is started
+    - In it make a dir for each persona
+    - Copy in the person.json (it'll have temp and stuff later, but has at least model now)
+    - Start a new time based json(l?) for each persona started
+  - Resume by specifying a json(l?) file
+
+- Make tools have a pre-flight check, if they fail then don't add them to persona details? Or maybe just fail to start.
+- Tools
+  - write-file
+- Target a CoreWars bot. I want to see it make a warrior that beats some of the current winners. Or past winners. Idk.    
 - Context management commands
   - /clear
   - /context-remove-latest-response
   - /context-remove-latest-prompt
 - Tools
-  - grep
-  - glob
+  - find-files    
+  - find-in-file
+  - find-files-containing
   - replace-in-file
-  - write
   - patch
-    - maybe? I wonder if models are smart enough to make diff patches...
-  - web-search
+    - maybe? I wonder if models are smart enough to make diff patches... hmm maybe if I give it diff...
+  - diff
   - lsp?
   - bash?
   - calc?
+- Track context usage
+  - Would be best to know the model's context limits (or maybe set them...)
 - Tool timeouts
 - Prompt should handle navigation keys
 - Save context and history separately
@@ -66,3 +59,4 @@ This agent searches on the filesystem for code relevant to some request.
   - History should be saved for analysis/review
 - Manager starts history worker
 - Resumable sessions
+- Streaming response
