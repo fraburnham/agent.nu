@@ -11,7 +11,13 @@ def main [
 ] {
   let config = config load $config_file
 
-  agent-loop run $config $config.base_persona (tui run) (context initial $config $config.base_persona)
+  agent-loop run {
+    config: $config
+    persona: $config.base_persona
+    manager_job_id: (tui run)
+    initial_context: (context initial $config $config.base_persona)
+    history_path: "" # start w/ the history base path and compute a new subdir for this session, each history worker neeeds to know the persona name and compute a _newer, suber_ path
+  }
 
   loop {
     match (job recv) { # Wait for an exit command from the tui

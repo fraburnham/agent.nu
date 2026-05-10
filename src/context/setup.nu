@@ -4,7 +4,7 @@ use ../tools.nu
 export def initial [
   config: record
   persona: string
-] {
+]: nothing -> record {
   {
     messages: [{
       role: "system"

@@ -62,7 +62,13 @@ def start-agent [
     }
   }
 
-  let agent_job_id = agent-loop run $mock_config $mock_persona (job id) $initial_context
+  let agent_job_id = agent-loop run {
+    config: $mock_config
+    persona: $mock_persona
+    manager_job_id: (job id)
+    initial_context: $initial_context
+    history_path: ""
+  }
 
   # Await first send from loop start
   job recv --timeout 0.1sec
@@ -253,6 +259,9 @@ def "test agent-loop sends a chat message" [] {
 # tool calls but no content
 # others?
 
+# TODO: these tests are pretty weak. Make them confirm that the stubs were called at all.
+
 export def main [] {
   runner run
 }
+

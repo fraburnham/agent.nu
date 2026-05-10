@@ -15,13 +15,19 @@ export def main [] {
 
   mut message = {}
 
-  agent-loop run $config $params.worker (job id) (
-    {
-      role: "user"
-      content: $params.task
-    }
-    | context append message (context initial $config $params.worker)
-  )
+  agent-loop run {
+    config: $config
+    persona: $params.worker
+    manager_job_id: (job id)
+    initial_context: (
+      {
+        role: "user"
+        content: $params.task
+      }
+      | context append message (context initial $config $params.worker)
+    )
+    history_path: ""
+  }
 
   loop {
     $message = job recv
@@ -47,4 +53,3 @@ export def main [] {
   | last
   | get content
 }
-

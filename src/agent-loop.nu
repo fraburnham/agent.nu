@@ -31,11 +31,14 @@ def advance [
 }
 
 export def run [
-  config: record
-  persona: string
-  manager_job_id: int
-  initial_context: record
+  agent_config: record<config: record, persona: string, manager_job_id: int, initial_context: record, history_path: string>
 ] {
+  let config: record = $agent_config.config
+  let persona: string = $agent_config.persona
+  let manager_job_id: int = $agent_config.manager_job_id
+  let initial_context: record = $agent_config.initial_context
+  let history_base_path: string = $agent_config.history_path
+
   job spawn --description agent-loop { ||
     # TODO: token use tracking (iirc ollama is responding with all kinds of metrics, use them to track context fullness)
     # TODO: config file to pull model and params (temp/top_p/context length/etc) from
