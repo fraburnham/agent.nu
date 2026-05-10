@@ -16,7 +16,10 @@ export def main [] {
   mut message = {}
 
   agent-loop run {
-    config: $config
+    config: (
+      $config
+      | context history set path $params.worker --tool-call-id $input.tool_call.id
+    )
     persona: $params.worker
     manager_job_id: (job id)
     initial_context: (
@@ -26,7 +29,6 @@ export def main [] {
       }
       | context append message (context initial $config $params.worker)
     )
-    history_path: ""
   }
 
   loop {
@@ -35,6 +37,9 @@ export def main [] {
     #       if it times out w/o a message assume something is broken
     #       The timeout will have to be long enough to include _loading_ the model, so maybe an intelligent thing can know
     #       if the model is loaded before it "starts" the timer...
+
+    # TODO: the messages should get passed to the main controller so they can be displayed or some concept of
+    #       "stuff happening" can be expressed
 
     match ($message.context | context get state) {
       "awaiting-model" => {

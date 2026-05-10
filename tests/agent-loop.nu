@@ -63,11 +63,13 @@ def start-agent [
   }
 
   let agent_job_id = agent-loop run {
-    config: $mock_config
+    config: (
+      $mock_config
+      | upsert history_path (mktemp -d)
+    )
     persona: $mock_persona
     manager_job_id: (job id)
     initial_context: $initial_context
-    history_path: ""
   }
 
   # Await first send from loop start

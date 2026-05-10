@@ -14,6 +14,8 @@ def advance [
 
   $context
   | api chat $config $persona
+  # TODO: make history update and sending the controller context messages the same thing.
+  # Should allow more updates than once per turn (since tool call respones are part of the same turn as the request now...)
   | context history update $history_worker_id
   | context append message $context
   | do {
@@ -31,20 +33,20 @@ def advance [
 }
 
 export def run [
-  agent_config: record<config: record, persona: string, manager_job_id: int, initial_context: record, history_path: string>
+  agent_config: record<config: record, persona: string, manager_job_id: int, initial_context: record>
 ] {
   let config: record = $agent_config.config
   let persona: string = $agent_config.persona
   let manager_job_id: int = $agent_config.manager_job_id
   let initial_context: record = $agent_config.initial_context
-  let history_base_path: string = $agent_config.history_path
+  let history_path: string = $config.history_path
 
   job spawn --description agent-loop { ||
     # TODO: token use tracking (iirc ollama is responding with all kinds of metrics, use them to track context fullness)
     # TODO: config file to pull model and params (temp/top_p/context length/etc) from
 
     mut context: record = $initial_context
-    let history_worker_id = context history start-worker
+    let history_worker_id = context history start-worker $history_path
 
     $initial_context.messages
     | each { |message|
