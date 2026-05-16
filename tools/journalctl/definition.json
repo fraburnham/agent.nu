@@ -1,0 +1,22 @@
+{
+    "type": "function",
+    "function": {
+        "name": "journalctl",
+        "description": "Run a `journalctl` command on the host machine.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "flags": {
+                    "description": "The flags to pass to journalctl.",
+                    "type": "string",
+                },
+                "grep": {
+                    "description": "An expression to pass to grep to filter the journalctl output.",
+                    "type": "string"
+                }
+            },
+            "required": [],
+            "additionalProperties": false
+        }
+    }
+}
