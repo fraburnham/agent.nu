@@ -35,7 +35,10 @@ export def main [
 
     $response.tool_calls
     | each { |tool_call|
-      print $"(ansi yellow)- ($tool_call.function.name)(ansi reset)"
+      print $"(ansi yellow)- ($tool_call.function.name)"
+      # TODO: make the args configable
+      print $tool_call.function.arguments
+      print -n (ansi reset)
     }
   }
 }
