@@ -1,6 +1,6 @@
 {
     "model": "gemma4:26b-a4b-it-q4_K_M",
     "tools": [
-        "journalctl"
+        "shell-command"
     ]
 }
