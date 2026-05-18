@@ -1,3 +1,4 @@
 *~
 *.autosave
 .agent.nu/
+.formatting-handler.run
