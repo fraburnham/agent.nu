@@ -1,0 +1,20 @@
+{
+    "type": "function",
+    "function": {
+        "name": "read-file",
+        "description": "Read a utf-8 encoded file from disk",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "relativePath": {
+                    "description": "The file path relative to the current directory (./ will be prefixed for safety)",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "relativePath"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
