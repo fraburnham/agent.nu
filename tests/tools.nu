@@ -12,6 +12,7 @@ const mock_config = {
 def "test the tool runner executes tools passing config and tool_call details" [] {
   let tool_call = {
     id: "mock-id"
+    tool_call_id: "mock-id"
     function: {
       index: 0
       name: "mock"
@@ -31,6 +32,7 @@ def "test the tool runner executes tools passing config and tool_call details" [
   let expected = [
     {
       id: "mock-id"
+      tool_call_id: "mock-id"
       role: "tool"
       content: $"(
         {
@@ -65,6 +67,7 @@ def "test the tool runner ignores unknown tools" [] {
 
   let expected = [{
     id: "mock-id"
+    tool_call_id: "mock-id"
     role: "tool"
     content: "No matching tool found. Retrying the call will not help."
   }]

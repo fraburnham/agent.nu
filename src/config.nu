@@ -5,6 +5,7 @@ const defaults = {
   personas_path: "./personas"
   tools_path: "./tools"
   history_path: "./.agent.nu/history"
+  provider: "ollama" # or bedrock
 }
 
 export def load [
@@ -15,7 +16,7 @@ export def load [
   let config = $defaults
   | merge deep (open ($config_file | path expand))
 
-  if ($config.ollama_host | is-empty) {
+  if ($config.provider == "ollama") and ($config.ollama_host | is-empty) {
     error make { msg: "`ollama_host` is a required config property" }
   }
 

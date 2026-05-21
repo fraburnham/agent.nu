@@ -1,6 +1,6 @@
 use std/log
 
-use api.nu
+use api
 use context
 use tools.nu
 use personas.nu

@@ -41,6 +41,7 @@ export def "handle calls" [
   | each { |tool_call|
     {
       id: $tool_call.id?
+      tool_call_id: $tool_call.id?
       role: "tool"
       content: (run-tool $"($config.tools_path)/($tool_call.function.name)/run" $config  $tool_call)
     }

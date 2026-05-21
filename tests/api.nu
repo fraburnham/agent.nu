@@ -5,13 +5,14 @@ export def --wrapped "http post" [...args] {
   runner stub STUB_HTTP_POST ...$args
 }
 
-use ../src/api.nu
+use ../src/api
 
 const mock_persona = "high-level-leader"
 const mock_config = {
   ollama_host: "http://mock.host"
   personas_path: "./tests/mock/personas"
   tools_path: "./tests/mock/tools"
+  provider: "ollama"
 }
 
 def "test that chat appends the response onto the context" [] {

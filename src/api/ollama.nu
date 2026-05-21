@@ -1,5 +1,4 @@
-use context
-use personas.nu
+use ../personas.nu
 
 export def chat [
   config: record
@@ -14,4 +13,3 @@ export def chat [
   | http post $"($config.ollama_host)/api/chat"
   | get message
 }
-

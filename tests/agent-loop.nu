@@ -3,7 +3,7 @@ use runner
 
 use ../src/context
 
-module api.nu {
+module api {
   export def --wrapped "api chat" [...args] {
     runner stub STUB_API_CHAT --pipe-passthrough ...$args
   }
@@ -32,7 +32,7 @@ module context {
   }
 }
 
-overlay use api.nu
+overlay use api
 overlay use tools.nu
 overlay use context
 
