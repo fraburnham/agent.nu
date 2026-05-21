@@ -5,4 +5,4 @@ if ! command -v jq; then
   return 1
 fi
 
-sh -c "$(jq -r '.tool_call.function.arguments.command' -)"
+sh -i -c "$(jq -r '.tool_call.function.arguments.command' -)"
