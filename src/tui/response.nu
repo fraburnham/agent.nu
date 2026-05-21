@@ -11,7 +11,7 @@ def formatter [] {
     return
   }
 
-  print -n $"(ansi blue)*(ansi reset) ($input)"
+  print $"(ansi blue)*(ansi reset) ($input)"
 }
 
 export def main [
