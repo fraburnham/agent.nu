@@ -28,4 +28,10 @@ export def main []: string -> string {
 
   overwrite $relativePath $start $end $newLines
   | tee { save -f $relativePath }
+  | lines
+  | enumerate
+  | each { |line|
+    $"($line.index + 1): ($line.item)"
+  }
+  | str join "\n"
 }

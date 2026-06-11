@@ -2,7 +2,7 @@
     "type": "function",
     "function": {
         "name": "add-new-lines-to-file",
-        "description": "Add new lines to an existing file. Use this tool when updating code/config/etc files and adding **completely new** lines, not modifying existing lines. You MUST read any files you intend to update with line numbers enabled so you're able to correctly generate a call to this tool. The updated file will be returned.",
+        "description": "Add new lines to an existing file. Use this tool when updating code/config/etc files and adding **completely new** lines, not modifying existing lines. You MUST read any files you intend to update with line numbers enabled so you're able to correctly generate a call to this tool. The updated file will be returned with line numbers added to the start of each line like `<num>: <content>`.",
         "parameters": {
             "type": "object",
             "properties": {
