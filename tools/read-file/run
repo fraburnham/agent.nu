@@ -7,4 +7,15 @@ export def main []: string -> string {
   | path expand
 
   open --raw $relativePath
+  | if ($params.lineNumbers? | default true) {
+    $in
+    | lines
+    | enumerate
+    | each { |line|
+      $"($line.index + 1): ($line.item)"
+    }
+    | str join "\n"
+  } else {
+    $in
+  }
 }
